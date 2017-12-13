@@ -25,11 +25,11 @@ steps:
         gsutil cp gs://${PROJECT_ID}-pipeline-configs/hub.enc hub.enc
 
         gcloud kms decrypt \
-          --ciphertext-file=hub.enc \
-          --plaintext-file=/config/hub \
-          --location=global \
-          --keyring=${_KMS_KEYRING} \
-          --key=${_KMS_KEY}
+          --ciphertext-file hub.enc \
+          --plaintext-file /config/hub \
+          --location global \
+          --keyring ${_KMS_KEYRING} \
+          --key ${_KMS_KEY}
     volumes:
       - name: 'config'
         path: /config
@@ -55,8 +55,7 @@ steps:
       - name: 'kube'
         path: /kube
 
-  # Clone the helloworld-infrastructure repo which holds the Kubernetes
-  # deployment manifests.
+  # Clone the helloworld-infrastructure-qa repo.
   - name: 'gcr.io/hightowerlabs/hub'
     env:
       - 'HUB_CONFIG=/config/hub'
@@ -72,7 +71,7 @@ steps:
         hub config --global user.email "$${ACTIVE_ACCOUNT}"
         hub config --global user.name "Google Container Builder"
 
-        hub clone "https://github.com/${_GITHUB_USERNAME}/helloworld-infrastructure-qa.git"
+        hub clone "${_GITHUB_USERNAME}/helloworld-infrastructure-qa"
 
         cd helloworld-infrastructure-qa
 
